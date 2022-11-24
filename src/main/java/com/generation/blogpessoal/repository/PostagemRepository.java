@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface PostagemRepository extends JpaRepository<Postagem, Long> {
 
+
+    //o @Param é necessário quando tem o like do BD
     public List<Postagem> findAllByTituloContainingIgnoreCase(@Param("titulo") String titulo);
 
 }
