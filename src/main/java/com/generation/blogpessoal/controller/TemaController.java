@@ -49,16 +49,19 @@ public class TemaController {
 
     @PostMapping
     public ResponseEntity<Tema> postPostagem(@Valid @RequestBody Tema tema) {
+        if(tema.getId() == null)
         return ResponseEntity.status(HttpStatus.CREATED).body(temaRepository.save(tema));
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @PutMapping
     public ResponseEntity<Tema> putPostagem(@Valid @RequestBody Tema tema) {
-        if (tema.getId() == null)
-            return ResponseEntity.notFound().build();
-        else
+        if (tema.getDescricao() != null)
             return ResponseEntity.status(HttpStatus.OK)
                     .body(temaRepository.save(tema));
+        else
+            return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("{id}")

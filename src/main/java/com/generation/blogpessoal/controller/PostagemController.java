@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
 
+import com.generation.blogpessoal.repository.TemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,9 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostagemController {
 
-    @Autowired
+    @Autowired //injecao de dependencia
     private PostagemRepository postagemRepository;
+    private TemaRepository temaRepository;
 
     @GetMapping
     public ResponseEntity<List<Postagem>> getAll() {
@@ -53,8 +55,13 @@ public class PostagemController {
 
     @PostMapping
     public ResponseEntity<Postagem> postPostagem(@Valid @RequestBody Postagem postagem) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+
+        if (temaRepository.existsById(postagem.getTema().getId())) //chec id do tema dentro da postagem
+            return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePostagem(@PathVariable Long id) {
@@ -62,7 +69,7 @@ public class PostagemController {
             postagemRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
 
@@ -81,10 +88,20 @@ public class PostagemController {
 
     @PutMapping
     public ResponseEntity<Postagem> putPostagem(@Valid @RequestBody Postagem postagem) {
-        if (postagem.getId() == null)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(postagemRepository.save(postagem));
+        //return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
+
+        if (postagemRepository.existsById(postagem.getId())) {//tem id da postagem checa o tema
+            if (temaRepository.existsById(postagem.getTema().getId())) // tem o tema ele grava embaixo
+                return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }// nao tem BAD
+
+        //return postagemRepository.findById(postagem.getId()) // retorna o id se ele for ok
+        //.map(resposta -> ResponseEntity.status(HttpStatus.OK) /// salva mensagem
+        //			.body(postagemRepository.save(postagem))) /// do corpo da mensagem
+        //.orElse(ResponseEntity.notFound().build()); // se nao for ok manda esta mensagemß
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
