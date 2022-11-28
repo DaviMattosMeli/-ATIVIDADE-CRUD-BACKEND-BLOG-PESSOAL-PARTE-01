@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.UpdateTimestamp;
 
 
@@ -30,6 +31,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 
         @UpdateTimestamp
         private LocalDateTime data;
+
+        @ManyToOne
+        @JsonIgnoreProperties("postagem")
+        private Tema tema;
+
+        public Tema getTema() {
+            return tema;
+        }
+
+        public void setTema(Tema tema) {
+            this.tema = tema;
+        }
 
         public Long getId() {
             return id;
