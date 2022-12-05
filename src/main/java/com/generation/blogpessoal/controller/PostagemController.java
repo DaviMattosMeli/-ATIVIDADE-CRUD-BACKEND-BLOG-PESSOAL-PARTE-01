@@ -22,6 +22,7 @@ public class PostagemController {
 
     @Autowired //injecao de dependencia
     private PostagemRepository postagemRepository;
+    @Autowired
     private TemaRepository temaRepository;
 
     @GetMapping
