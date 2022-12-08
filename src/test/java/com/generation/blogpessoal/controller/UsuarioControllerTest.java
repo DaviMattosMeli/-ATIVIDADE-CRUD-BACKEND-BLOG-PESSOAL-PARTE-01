@@ -1,6 +1,7 @@
 package com.generation.blogpessoal.controller;
 
 import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.model.UsuarioLogin;
 import com.generation.blogpessoal.repository.UsuarioRepository;
 import com.generation.blogpessoal.service.UsuarioService;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,6 +67,20 @@ public class UsuarioControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Test
+    @DisplayName("Login de um Usuario")
+    public void Login() {
+
+        HttpEntity<UsuarioLogin> corpoRequisicao = new HttpEntity<>(
+                new UsuarioLogin("root@root.com", "rootroot"));
+
+        ResponseEntity<Usuario> corpoResposta = testRestTemplate.exchange("/usuarios/logar", HttpMethod.POST,
+                corpoRequisicao, Usuario.class);
+
+        assertEquals(HttpStatus.OK, corpoResposta.getStatusCode());
+    }
 }
+
 
 
