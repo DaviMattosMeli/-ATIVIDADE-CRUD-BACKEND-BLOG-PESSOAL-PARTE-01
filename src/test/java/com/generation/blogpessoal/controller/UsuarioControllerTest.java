@@ -80,6 +80,16 @@ public class UsuarioControllerTest {
 
         assertEquals(HttpStatus.OK, corpoResposta.getStatusCode());
     }
+
+    @Test
+    @DisplayName("Buscar Usuário por ID")
+    public void buscarUsuarioPorId() {
+        ResponseEntity<String> response = testRestTemplate
+                .withBasicAuth("root@root.com", "rootroot")
+                .exchange("/usuarios/buscarporid/1", HttpMethod.GET, null, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 }
 
 
