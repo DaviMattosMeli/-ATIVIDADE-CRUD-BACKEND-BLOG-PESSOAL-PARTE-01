@@ -1,5 +1,6 @@
 package com.generation.blogpessoal.controller;
 
+
 import com.generation.blogpessoal.model.Usuario;
 import com.generation.blogpessoal.model.UsuarioLogin;
 import com.generation.blogpessoal.repository.UsuarioRepository;
@@ -38,13 +39,13 @@ public class UsuarioControllerTest {
     void start() {
         usuarioRepository.deleteAll();
 
-        usuarioService.cadastrarUsuario(new Usuario(0L, "Root", "root@root.com", "rootroot", ""));
+        usuarioService.cadastrarUsuario(new Usuario(0L, "root", "root@root.com", "rootroot", ""));
     }
 
     @Test
     @DisplayName("Cadastrar Usuario")
     public void deveCriarUmUsuario() {
-        HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L, "paulo", "paulo@gmail.com", "123456789", "123"));
+        HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L, "paulo", "paulo@gmail.com", "12345678", "123"));
 
         ResponseEntity<Usuario> response = testRestTemplate.exchange("/usuarios/cadastrar", HttpMethod.POST, corpoRequisicao, Usuario.class);
 
@@ -81,6 +82,23 @@ public class UsuarioControllerTest {
         assertEquals(HttpStatus.OK, corpoResposta.getStatusCode());
     }
 
+
+    @Test
+    @DisplayName("Não deve permitir duplicação do Usuário")
+    public void naoDeveDuplicarUsuario() {
+
+        usuarioService.cadastrarUsuario(new Usuario(0L,
+                "Maria da Silva", "maria_silva@email.com.br", "13465278", "https://i.imgur.com/T12NIp9.jpg"));
+
+        HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L,
+                "Maria da Silva", "maria_silva@email.com.br", "13465278", "https://i.imgur.com/T12NIp9.jpg"));
+
+        ResponseEntity<Usuario> corpoResposta = testRestTemplate
+                .exchange("/usuarios/cadastrar", HttpMethod.POST, corpoRequisicao, Usuario.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, corpoResposta.getStatusCode());
+    }
+
     @Test
     @DisplayName("Buscar Usuário por ID")
     public void buscarUsuarioPorId() {
@@ -90,6 +108,7 @@ public class UsuarioControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
 }
 
 
